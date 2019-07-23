@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace SecretHitlerAPI
+
+namespace SecretHitler.Api
 {
     public class Program
     {

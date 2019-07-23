@@ -10,14 +10,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SecretHitler.Api.Infrastructure.Services;
 
-namespace SecretHitlerAPI
+namespace SecretHitler.Api
 {
     public class Startup
     {
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            GameService gameService = new GameService();
+            gameService.ImportGames();
         }
 
         public IConfiguration Configuration { get; }
@@ -25,6 +28,8 @@ namespace SecretHitlerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<GameService>();
+            services.AddSingleton<UserService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
