@@ -9,10 +9,7 @@ namespace SecretHitler.Api.Infrastructure.Services
 {
     public class GameService
     {
-        private float LiberalTotalScore = 0;
-        private float FascistTotalScore = 0;
-        private int LiberalAvgScore = 0;
-        private int FascistAvgScore = 0;
+        
 
         public GameService()
         {
@@ -57,6 +54,10 @@ namespace SecretHitler.Api.Infrastructure.Services
         }
         public void AddGame(Game game)
         {
+            float LiberalTotalScore = 0;
+            float FascistTotalScore = 0;
+            int LiberalAvgScore;
+            int FascistAvgScore;
             float modifier;
             switch (game.VictoryType)
             {
@@ -92,25 +93,30 @@ namespace SecretHitler.Api.Infrastructure.Services
                 delta = CalculateELO(LiberalAvgScore, FascistAvgScore, GameOutcome.Win);
                 foreach (string liberal in game.Liberals)
                 {
-                    users.UserDict[liberal] += delta * modifier;
+                    var individualModifier = (((users.UserDict[liberal] / LiberalAvgScore) - 1) * 2) + 1;
+                    users.UserDict[liberal] += delta * modifier * individualModifier;
                 }
                 foreach (string fascist in game.Fascists)
                 {
-                    users.UserDict[fascist] -= delta * modifier;
+                    var individualModifier = (((FascistAvgScore / users.UserDict[fascist]) - 1) * 2) + 1;
+                    users.UserDict[fascist] -= delta * modifier * individualModifier;
                 }
             }
             else
             {
-                delta = CalculateELO(LiberalAvgScore, FascistAvgScore, GameOutcome.Loss);
+                delta = CalculateELO(FascistAvgScore, LiberalAvgScore, GameOutcome.Win);
                 foreach (string liberal in game.Liberals)
                 {
-                    users.UserDict[liberal] -= delta * modifier;
+                    var individualModifier = (((LiberalAvgScore / users.UserDict[liberal]) - 1) * 2) + 1;
+                    users.UserDict[liberal] -= delta * modifier * individualModifier;
                 }
                 foreach (string fascist in game.Fascists)
                 {
-                    users.UserDict[fascist] += delta * modifier;
+                    var individualModifier = (((users.UserDict[fascist] / FascistAvgScore) - 1) * 2) + 1;
+                    users.UserDict[fascist] += delta * modifier * individualModifier;
                 }
             }
+            var nonce = users.UserDict["Arji"];
             File.WriteAllText("Users.json", JsonConvert.SerializeObject(users));
             
         }
