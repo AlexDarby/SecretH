@@ -116,7 +116,6 @@ namespace SecretHitler.Api.Infrastructure.Services
                     users.UserDict[fascist] += delta * modifier * individualModifier;
                 }
             }
-            var nonce = users.UserDict["Arji"];
             File.WriteAllText("Users.json", JsonConvert.SerializeObject(users));
             
         }
